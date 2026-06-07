@@ -1,4 +1,4 @@
-1 - criar Dockerfile e depois docker-compose.yml
+1 - criar Dockerfile e depois docker-compose.yml ---- arquivos
 
 2 -  configurar o Dockerfile, o nosso container.
 
@@ -14,3 +14,23 @@
 
 6 -  PRIMEIRO COMANDO PARA INICIAR O container
     1 - podman machine init
+
+    2 - podman machine start
+
+    3 - podman-compose build
+    **** ATENÇÃO VERIFICAR AS VERSÕES DO PYTHON NO POETRY E NO CONTAINER >>> 
+    FROM python:3.12-slim **CONTAINER
+    requires-python = ">=3.12" ** NO PYPROJECT
+
+7 - SUBIR O CONTAINER
+    podman compose up -d
+
+8 - verificar as variaveis de ambiente
+        env_file:
+      - .env
+      2 - import os >>> para importar os arquivos
+      em seguida mudar os nomes das variaveis no programa para buscar via .env
+      ex.: 
+      DATABASE_URL = "sqlite:///./livros.db"      --- antes 
+      DATABASE_URL = os.getenv("DATABASE_URL")    --- Depois
+      
