@@ -111,6 +111,22 @@ ou
 docker compose down
 ```
 
+Ou poderá tentar desta maneira:
+
+COMANDO PARA INICIAR O container
+```
+    1 - podman machine init
+```
+```
+    2 - podman machine start
+```
+```
+    3 - podman-compose build
+```
+SUBIR O CONTAINER
+```
+    podman compose up -d
+```
 ---
 
 ## Credenciais de Acesso
@@ -158,7 +174,7 @@ Exemplo de corpo da requisição:
   "autor_livro": "SEP",
   "ano_livro": int
 }
-
+```
 
 
 ### Atualizar tarefa
