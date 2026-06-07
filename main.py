@@ -117,8 +117,9 @@ def post_livros(livro: Livro, db:Session = Depends(sessao_db), credentials: HTTP
     
     
     return {"Mensagem": "O livro foi criado com sucesso"}
+
     
-    
+#atualiza    
 @app.put("/atualiza/{id_livro}")
 def put_livros(id_livro: int , livro:Livro, db:Session = Depends(sessao_db) , credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     
