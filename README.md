@@ -1,14 +1,13 @@
 # FastAPI - Gerenciador de Tarefas
 
-API REST desenvolvida com FastAPI para gerenciamento de tarefas, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic.
+API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic.
 
 ## Funcionalidades
 
-* Adicionar tarefas
-* Listar tarefas
-* Atualizar tarefas
-* Marcar tarefas como concluídas
-* Remover tarefas
+* Adicionar Livros
+* Listar livros
+* Atualizar livros
+* Remover Livros
 * Persistência de dados com SQLite
 * Autenticação HTTP Basic
 * Containerização com Docker
@@ -84,6 +83,20 @@ http://localhost:8000/redoc
 
 ---
 
+Criar o arquivo .env na pasta do projeto  com as variaveis de ambiente
+
+```text
+
+#VARIAVEIS DE AMBIENTE
+
+MEU_USUARIO = "admin"
+MINHA_SENHA = "admin" 
+
+DATABASE_URL = "sqlite:///./livros.db"
+PYTHONUNBUFFERED = 1
+
+```
+
 ## Encerrando a Aplicação
 
 Para parar os contêineres:
@@ -120,13 +133,18 @@ admin
 
 ## Endpoints
 
-### Listar tarefas
+exempo :
+
+http://localhost:8000/livros
+irá listar todos os livros
+
+### Listar Livros
 
 ```http
-GET /tarefas
+GET /livros
 ```
 
-### Adicionar tarefa
+### Adicionar Livro
 
 ```http
 POST /adiciona
@@ -136,28 +154,25 @@ Exemplo de corpo da requisição:
 
 ```json
 {
-  "nome_tarefa": "Estudar FastAPI",
-  "descricao_tarefa": "Praticar criação de APIs",
-  "concluida": false
+  "nome_Livro": "Palmeiras",
+  "autor_livro": "SEP",
+  "ano_livro": int
 }
-```
+
+
 
 ### Atualizar tarefa
 
 ```http
-PUT /atualiza/{id_tarefa}
+PUT /atualiza/{id_livro}
 ```
 
-### Concluir tarefa
+
+
+### Remover Livro
 
 ```http
-PUT /atualiza/{id_tarefa}/concluir
-```
-
-### Remover tarefa
-
-```http
-DELETE /delete/{id_tarefa}
+DELETE /deletar/{id_livro}
 ```
 
 ---
@@ -171,7 +186,7 @@ DELETE /delete/{id_tarefa}
 ├── docker-compose.yml
 ├── pyproject.toml
 ├── poetry.lock
-├── tarefas.db
+├── livros.db
 └── README.md
 ```
 
@@ -180,3 +195,6 @@ DELETE /delete/{id_tarefa}
 ## Autor
 
 Projeto desenvolvido para fins de estudo utilizando FastAPI, SQLAlchemy, SQLite e Docker.
+desenvolvido por:
+
+Everton Felipe
