@@ -1,0 +1,16 @@
+1 - criar Dockerfile e depois docker-compose.yml
+
+2 -  configurar o Dockerfile, o nosso container.
+
+3 - configurar o docker-compose que é o nosso gerenciador de container
+
+4 - docker.com é o oficial, iremos utlizar o podman como alternativa
+
+5 -  configurando o podman:
+
+  1 -  choco install podman-cli  --- ou --- winget install RedHat.Podman ---> instalar somente se já nao estiver instalado para verificar podman --version
+        verificar se o wsl ja está instalado, se nao tiver ----> wsl --install
+  2 -  pip install podman-compose
+
+6 -  PRIMEIRO COMANDO PARA INICIAR O container
+    1 - podman machine init
