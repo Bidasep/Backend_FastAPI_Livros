@@ -34,3 +34,15 @@
       DATABASE_URL = "sqlite:///./livros.db"      --- antes 
       DATABASE_URL = os.getenv("DATABASE_URL")    --- Depois
       
+
+**********************
+
+executando diretamente o Conteinar (Dockerfile "Imagem") sem o docker-compose
+
+1 -  podman build -t "Nome da aplicação sem aspas(Imagem)" .
+
+2 - podman run --env-file .env -d -p 8000:8000 "Nome da aplicação sem aspas(Imagem)"
+
+
+PARA PARAR O CONTAINER
+3 - podman stop CONTAINER ID -----> da para saber o id via: podman ps
