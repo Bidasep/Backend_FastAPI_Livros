@@ -13,23 +13,35 @@ from pydantic import BaseModel
 from typing import Optional
 import secrets
 import os
+import redis
+import json
 
 from sqlalchemy import create_engine,Column, Integer,String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+import asyncio
 
+# ativar quando usar docker
+#DATABASE_URL = os.getenv("DATABASE_URL")
+#MEU_USUARIO = os.getenv("MEU_USUARIO")
+#MINHA_SENHA = os.getenv("MINHA_SENHA")
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+##utilizar quando for subir somente o FAST API comentar quando usar docker.
+MEU_USUARIO = "admin"
+MINHA_SENHA = "admin" 
+
+DATABASE_URL = "sqlite:///./livros.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread" : False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+#inicialização do redis obs. configuração para rodar localmente
+redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+
 
 app = FastAPI()
 
-MEU_USUARIO = os.getenv("MEU_USUARIO")
-MINHA_SENHA = os.getenv("MINHA_SENHA")
 
 security = HTTPBasic()
 
@@ -49,6 +61,22 @@ class Livro(BaseModel):
     
 Base.metadata.create_all(bind=engine)
 
+
+
+# a funcção .dict foi substituida pela .model_dumpo
+# função para salvar os dados no Redis
+def salvar_livro_redis(livro_id: int, livro: Livro):
+    redis_client.set(f"livro:{livro_id}", json.dumps(livro.model_dump()))
+    
+    
+ # função para deletar os dados no Redis   
+def deletar_livro_redis(livro_id: int):
+    redis_client.delete(f"livro:{livro_id}")
+    
+    
+    
+    
+    
 def sessao_db():
     db = SessionLocal()
     try:
@@ -69,14 +97,61 @@ def autenticar_meu_usuário(credentials: HTTPBasicCredentials = Depends(security
 
     
 @app.get("/")
-def hello_world():
+async def hello_world():
     return {"Hellos" : "Worlds!"}
 
+#################################### TESTANDO CHAMADAS EXTERNAS
+async def chamadas_externas1():
+    await asyncio.sleep(2)
+    return "Resultado chamada 01"
+    
+async def chamadas_externas2():
+    await asyncio.sleep(2)
+    return "Resultado chamada 02"
+    
+async def chamadas_externas3():
+    await asyncio.sleep(2) 
+    return "Resultado chamada 03"
+
+#função para teste de tarefa assincrona
+@app.get("/testando-API")
+async def testando_api():
+    tarefa01 = asyncio.create_task( chamadas_externas1())
+    tarefa02 = asyncio.create_task( chamadas_externas2())
+    tarefa03 = asyncio.create_task( chamadas_externas3())
+    
+    resultado1 = await tarefa01
+    resultado2 = await tarefa02
+    resultado3 = await tarefa03
+    
+    return {"message":"todas as chamadas das API's foram concluidas com sucesso",
+            "resultado": [resultado1, resultado2, resultado3]
+            }
+    
+
+
+
+#função testando o Redis, ver os objetos que estão salvos no redis
+@app.get("/debug/redis")
+async def ver_livros_redis():
+    chaves = redis_client.keys("livro:*")
+    livros = []
+    
+    for chave in chaves:
+        valor = redis_client.get(chave)
+        livros.append({
+            "chave" : chave, 
+            "valor": json.loads(valor)}
+            )
+    
+    return livros
+        
+    
 
 
 
 @app.get("/livros")
-def get_livros(page: int=1, limit: int = 10, db: Session = Depends(sessao_db)  ,credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
+async def get_livros(page: int=1, limit: int = 10, db: Session = Depends(sessao_db)  ,credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     if page < 1 or limit < 1:
         raise HTTPException(status_code=400,detail="page ou limit estão com valores inválidos!!!")
     
@@ -95,14 +170,14 @@ def get_livros(page: int=1, limit: int = 10, db: Session = Depends(sessao_db)  ,
         "limit": limit,
         "total": total_livros,
         #Faz um for in (para cada livro ou item do Livro ( que é os arquivos do nosso DB))
-        "livros": [{"id": livro.id, "nome_livro": livro.nome_livro, "autor_livro":livro.autor_livro, "ano_livro": livro.autor_livro} for livro in Livros]
+        "livros": [{"id": livro.id, "nome_livro": livro.nome_livro, "autor_livro":livro.autor_livro, "ano_livro": livro.ano_livro} for livro in Livros]
         
         }
     
     
 
 @app.post("/adiciona")
-def post_livros(livro: Livro, db:Session = Depends(sessao_db), credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
+async def post_livros(livro: Livro, db:Session = Depends(sessao_db), credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     
     db_livro = db.query(LivroDB).filter(LivroDB.nome_livro == livro.nome_livro,LivroDB.autor_livro == livro.autor_livro).first()
     
@@ -115,13 +190,15 @@ def post_livros(livro: Livro, db:Session = Depends(sessao_db), credentials: HTTP
     db.commit()
     db.refresh(novo_livro)
     
+    salvar_livro_redis(novo_livro.id, livro )
+    
     
     return {"Mensagem": "O livro foi criado com sucesso"}
 
     
 #atualiza    
 @app.put("/atualiza/{id_livro}")
-def put_livros(id_livro: int , livro:Livro, db:Session = Depends(sessao_db) , credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
+async def put_livros(id_livro: int , livro:Livro, db:Session = Depends(sessao_db) , credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     
     db_livro = db.query(LivroDB).filter(LivroDB.id == id_livro).first()
     
@@ -138,7 +215,7 @@ def put_livros(id_livro: int , livro:Livro, db:Session = Depends(sessao_db) , cr
 
 
 @app.delete("/deletar/{id_livro}")
-def delete_livro(id_livro: int, db:Session = Depends(sessao_db) , credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
+async def delete_livro(id_livro: int, db:Session = Depends(sessao_db) , credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     
     db_livro = db.query(LivroDB).filter(LivroDB.id == id_livro).first()
     
@@ -148,6 +225,8 @@ def delete_livro(id_livro: int, db:Session = Depends(sessao_db) , credentials: H
     
     db.delete(db_livro)
     db.commit()
+    
+    deletar_livro_redis(id_livro)
     
     return{"message": "Seu livro foi deletado com sucesso"}
             
