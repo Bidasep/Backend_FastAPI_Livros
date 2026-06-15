@@ -63,20 +63,19 @@ Base.metadata.create_all(bind=engine)
 
 
 
-# a funcção .dict foi substituida pela .model_dumpo
+# a funcção .dict  foi substituida pela .model_dumpo
 # função para salvar os dados no Redis
-def salvar_livro_redis(livro_id: int, livro: Livro):
+async def salvar_livro_redis(livro_id: int, livro: Livro):
     redis_client.set(f"livro:{livro_id}", json.dumps(livro.model_dump()))
     
-    
  # função para deletar os dados no Redis   
-def deletar_livro_redis(livro_id: int):
+async def deletar_livro_redis(livro_id: int):
     redis_client.delete(f"livro:{livro_id}")
     
     
     
     
-    
+#iniciar Db   
 def sessao_db():
     db = SessionLocal()
     try:
@@ -131,18 +130,22 @@ async def testando_api():
 
 
 
-#função testando o Redis, ver os objetos que estão salvos no redis
+#função testando o Redis, ver os objetos que estão salvos no redis e o ttl
 @app.get("/debug/redis")
 async def ver_livros_redis():
-    chaves = redis_client.keys("livro:*")
+    chaves = redis_client.keys("livros:*")
     livros = []
     
     for chave in chaves:
         valor = redis_client.get(chave)
-        livros.append({
+        ttl = redis_client.ttl(chave)
+        livros.append(
+            {
             "chave" : chave, 
-            "valor": json.loads(valor)}
-            )
+            "valor": json.loads(valor),
+            "ttl": ttl
+            }
+        )
     
     return livros
         
@@ -151,29 +154,47 @@ async def ver_livros_redis():
 
 
 @app.get("/livros")
-async def get_livros(page: int=1, limit: int = 10, db: Session = Depends(sessao_db)  ,credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
+async def get_livros( page: int=1, limit: int = 10, db: Session = Depends(sessao_db), credentials: HTTPBasicCredentials = Depends(autenticar_meu_usuário)):
     if page < 1 or limit < 1:
         raise HTTPException(status_code=400,detail="page ou limit estão com valores inválidos!!!")
+
+    cache_key = f"livros:page={page}&limit={limit}"
+    cached = redis_client.get(cache_key)
+    
+    if cached:
+        return json.loads(cached)
     
     #Função ja para trazer organizado os itens do DB , substitui a antigas função livros_paginados
-    Livros = db.query(LivroDB).offset((page - 1)* limit).limit(limit).all()
-    
-    if not Livros:
+    livros = db.query(LivroDB).offset((page - 1)* limit).limit(limit).all()
+
+    if not livros:
         return {"message: ""Não existe nenhum livro!"}
-    
+
     #Função para contar a quantidade de itens na tabela
     total_livros = db.query(LivroDB).count()
-    
 
-    return {
+
+    resposta = {
         "page": page,
         "limit": limit,
         "total": total_livros,
         #Faz um for in (para cada livro ou item do Livro ( que é os arquivos do nosso DB))
-        "livros": [{"id": livro.id, "nome_livro": livro.nome_livro, "autor_livro":livro.autor_livro, "ano_livro": livro.ano_livro} for livro in Livros]
-        
-        }
+        "livros": [
+            {
+                "id": livro.id,
+                "nome_livro": livro.nome_livro,
+                "autor_livro":livro.autor_livro,
+                "ano_livro": livro.ano_livro
+                
+            } for livro in livros
+        ]
+    }
     
+    #cache key é o tempo para os dados sumirem do cache
+    redis_client.setex(cache_key,30,json.dumps(resposta))
+    
+    return resposta    
+        
     
 
 @app.post("/adiciona")
@@ -190,7 +211,7 @@ async def post_livros(livro: Livro, db:Session = Depends(sessao_db), credentials
     db.commit()
     db.refresh(novo_livro)
     
-    salvar_livro_redis(novo_livro.id, livro )
+    await salvar_livro_redis(novo_livro.id, livro )
     
     
     return {"Mensagem": "O livro foi criado com sucesso"}
@@ -203,7 +224,7 @@ async def put_livros(id_livro: int , livro:Livro, db:Session = Depends(sessao_db
     db_livro = db.query(LivroDB).filter(LivroDB.id == id_livro).first()
     
     if not db_livro:
-        return HTTPException(status_code=400, detail = "Esse livro nao foi encontrado no banco de dados!")
+        raise HTTPException(status_code=400, detail = "Esse livro nao foi encontrado no banco de dados!")
     db_livro.nome_livro = livro.nome_livro
     db_livro.autor_livro = livro.autor_livro
     db_livro.ano_livro  = livro.ano_livro
@@ -220,13 +241,13 @@ async def delete_livro(id_livro: int, db:Session = Depends(sessao_db) , credenti
     db_livro = db.query(LivroDB).filter(LivroDB.id == id_livro).first()
     
     if not db_livro:
-        return HTTPException(status_code=400, detail = "Esse livro nao foi encontrado na base de dados")
+        raise HTTPException(status_code=400, detail = "Esse livro nao foi encontrado na base de dados")
     
     
     db.delete(db_livro)
     db.commit()
     
-    deletar_livro_redis(id_livro)
+    await deletar_livro_redis(id_livro)
     
     return{"message": "Seu livro foi deletado com sucesso"}
             
