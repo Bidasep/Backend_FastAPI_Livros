@@ -17,7 +17,7 @@
 
     2 - podman machine start
 
-    3 - podman-compose build
+    3 - podman-compose build  --                *** podma-compose build --no-cache
     **** ATENÇÃO VERIFICAR AS VERSÕES DO PYTHON NO POETRY E NO CONTAINER >>> 
     FROM python:3.12-slim **CONTAINER
     requires-python = ">=3.12" ** NO PYPROJECT
@@ -46,3 +46,15 @@ executando diretamente o Conteinar (Dockerfile "Imagem") sem o docker-compose
 
 PARA PARAR O CONTAINER
 3 - podman stop CONTAINER ID -----> da para saber o id via: podman ps
+
+
+**************************************** 
+
+REDIS INSTALAÇÃO
+
+1 - poetry add redis
+  
+  import redis
+  import json
+
+2 - configurar o redis_cliente(dentro do codigo mesmo)
