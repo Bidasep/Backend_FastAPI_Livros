@@ -17,7 +17,7 @@
 
     2 - podman machine start
 
-    3 - podman-compose build  --                *** podma-compose build --no-cache
+    3 - podman-compose build  --                *** podman-compose build --no-cache
     **** ATENÇÃO VERIFICAR AS VERSÕES DO PYTHON NO POETRY E NO CONTAINER >>> 
     FROM python:3.12-slim **CONTAINER
     requires-python = ">=3.12" ** NO PYPROJECT
@@ -50,7 +50,9 @@ PARA PARAR O CONTAINER
 
 **************************************** 
 
-REDIS INSTALAÇÃO
+REDIS INSTALAÇÃO 
+o que é ? é um buffer que armazena temporariamente arquivos, meio que um banco de dados temporários
+para nao precisar ficar fazendo varias consultas ao banco de dados.
 
 1 - poetry add redis
   
@@ -58,3 +60,15 @@ REDIS INSTALAÇÃO
   import json
 
 2 - configurar o redis_cliente(dentro do codigo mesmo)
+
+**************************************
+Celery INSTALAÇÃO
+funciona
+
+1 - criar tasks.py 
+
+2 - instalar o Celery
+    1 - poetry shell
+    2 - poetry add celery    ////// instalar bibliotecas
+
+3 - criar arquivo de configuração do celery " celery_app.py "
