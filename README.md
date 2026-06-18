@@ -11,6 +11,8 @@ API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLit
 * Persistência de dados com SQLite
 * Autenticação HTTP Basic
 * Containerização com Docker
+* Cache 
+* Filas de mensagens e processamentos assíncronos
 
 ## Tecnologias Utilizadas
 
@@ -21,6 +23,8 @@ API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLit
 * Pydantic
 * Poetry
 * Docker
+* Redis
+* Celery
 
 ---
 
@@ -94,6 +98,9 @@ MINHA_SENHA = "admin"
 
 DATABASE_URL = "sqlite:///./livros.db"
 PYTHONUNBUFFERED = 1
+REDIS_HOST = redis
+REDIS_PORT = 6379
+REDIS_URL = redis://redis:6379/0
 
 ```
 
@@ -121,7 +128,7 @@ COMANDO PARA INICIAR O container
     2 - podman machine start
 ```
 ```
-    3 - podman-compose build
+    3 - podman-compose build --no-cache
 ```
 SUBIR O CONTAINER
 ```
@@ -190,7 +197,34 @@ PUT /atualiza/{id_livro}
 ```http
 DELETE /deletar/{id_livro}
 ```
+### Efetuar SOMA E FATORIAL via fila TESTE CELERY E REDIS
 
+```http
+POST "/calcular/soma"
+```
+Passar 2 numeros "a" e "b".
+
+Exemplo de requisição:
+
+``` http
+POST /calcular/soma?a=2&b=4
+```
+```http
+POST "/calcular/fatorial"
+```
+Passar 1 numero "N".
+
+Exemplo de requisição:
+
+``` http
+POST /calcular/fatorial?n=5
+```
+
+### Verificar as Filas
+
+``` http
+GET /tarefas/recentes
+```
 ---
 
 ## Estrutura do Projeto
