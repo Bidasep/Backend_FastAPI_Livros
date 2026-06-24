@@ -3,12 +3,13 @@ import os
 
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
-REDIS_URL = os.getenv("REDIS_URL", f"redis:// {REDIS_HOST}:{REDIS_PORT} /0")
+REDIS_URL = os.getenv("REDIS_URL",f"redis://{REDIS_HOST}:{REDIS_PORT}/0")
 
 celery_app = Celery(
     "tarefas_livros",
     broker = REDIS_URL,
-    backend =REDIS_URL
+    backend =REDIS_URL,
+    include=["tasks"] 
 )
 
 celery_app.conf.update(
@@ -19,3 +20,6 @@ celery_app.conf.update(
     result_serializer="json",
     accept_content=["json"]
 )
+
+
+import tasks

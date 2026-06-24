@@ -1,12 +1,12 @@
-from celery_app import celery_app
 import time
+from celery_app import celery_app
 
-@celery_app.task(name="tasks.somar", bind=True)
+@celery_app.task(name="tasks.somar", queue="livros", bind=True)
 def somar(self, a, b):
     time.sleep(3)
     return a + b
 
-@celery_app.task(name="tasks.fatorial",bind=True)
+@celery_app.task(name="tasks.fatorial", bind=True)
 def fatorial(self ,n):
     time.sleep(3)
     if n < 0:

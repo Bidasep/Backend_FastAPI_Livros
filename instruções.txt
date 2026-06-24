@@ -72,3 +72,22 @@ funciona
     2 - poetry add celery    ////// instalar bibliotecas
 
 3 - criar arquivo de configuração do celery " celery_app.py "
+
+CONFIGURAÇÕES KAFKA
+1 -  adicionar serviços no docker-compose
+      zookeper
+      kafka
+      kafka-ui
+2 - instalar o kafka
+    poetry add kafka-python
+
+
+
+verificar portas
+
+netstat -ano | findstr 8080
+
+tasklist /FI "PID eq 4196"    -->>> este 4196 é o processo que estava usando nossa porta.
+Nome da imagem            Identifi Nome da sessão       Sessão# Uso de memór
+========================= ======== ================ =========== ============
+AgentService.exe              4196 Services                   0     19.288 K

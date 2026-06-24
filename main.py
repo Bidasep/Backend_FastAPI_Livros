@@ -15,6 +15,7 @@ import secrets
 import os
 import redis
 import json
+
 from tasks import somar,fatorial
 from celery_app import celery_app
 from celery.result import AsyncResult
@@ -145,7 +146,7 @@ def calcular_soma(a:int, b:int):
     
     return {
         "task_id": tarefa.id,
-        "message": "Tarefa de soma enviada para execução"   
+        "message": "Tarefa de soma enviada para execução"
     }
 
 @app.post("/calcular/fatorial")
