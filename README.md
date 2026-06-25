@@ -1,4 +1,4 @@
-# FastAPI - Gerenciador de Livros com processamento assincrono
+# FastAPI - Gerenciador de Livros com processamento assíncrono
 
 API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic,Kafka para mensageria e publicação de eventos.
 
@@ -321,9 +321,8 @@ Exemplo de corpo da requisição:
 
 ## Autor
 
-Projeto desenvolvido para fins de estudo utilizando FastAPI, SQLAlchemy, SQLite e Docker.
+Projeto desenvolvido para fins de estudo utilizando FastAPI, SQLAlchemy, SQLite , Redis, Celery, Kafka e Docker.
 desenvolvido por:
 
 ## Everton Felipe
 
----
