@@ -272,7 +272,7 @@ O worker Celery foi configurado para consumir a fila personalizada:
 livros
 ```
 
-### Envio de mensagens e eventos para o Kafka.
+## Envio de mensagens e eventos para o Kafka.
 
 A aplicação utiliza Apache Kafka para publicação de eventos relacionados às
  operações realizadas na API.
@@ -285,7 +285,9 @@ O ambiente inclui:
 
 Kafka UI - Acesso a interface de monitoramento:
 
+```
 http://localhost:8080
+```
 
 ```http
 POST /adiciona
