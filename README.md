@@ -283,7 +283,15 @@ O ambiente inclui:
 - Zookeeper
 - Kafka UI
 
-Kafka UI - Acesso a interface de monitoramento:
+a interface de monitoramento está inicialmente configurada para a porta 8080.
+Para modificar a porta siga para o docker-compose e mude a porta:
+
+Serviços:
+    kafka-ui
+        ports:
+        - "8080:8080"
+
+Kafka UI - Acesso a interface de monitoramento: Onde deverá colocar a porta Escolhida
 
 ```
 http://localhost:8080
