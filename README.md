@@ -1,4 +1,4 @@
-# FastAPI - Gerenciador de Tarefas
+# FastAPI - Gerenciador de Livros com processamento assincrono
 
 API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic.
 
@@ -25,6 +25,20 @@ API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLit
 * Docker
 * Redis
 * Celery
+
+## Arquitetura
+
+A aplicação utiliza FastAPI para disponibilizar a API REST.
+
+- SQLite para persistência dos Dados.
+- Redis como Broker e Backend de resultados.
+- Celery para processamento assíncrono.
+- Kafka para mensageria e publicação de eventos.
+- Docker para containerização.
+
+Fluxo das tarefas assíncronas:
+
+Cliente → FastAPI → Redis → Celery Worker → Redis → Cliente
 
 ---
 
@@ -57,14 +71,20 @@ cd Backend_FastAPI_Livros
 
 Construir a imagem e iniciar os contêineres:
 
-```bash
-docker-compose up --build -d
+
+COMANDO PARA INICIAR O container
 ```
-
-ou, em versões mais recentes:
-
-```bash
-docker compose up --build -d
+    1 - podman machine init
+```
+```
+    2 - podman machine start
+```
+```
+    3 - podman-compose build --no-cache
+```
+SUBIR O CONTAINER
+```
+    podman compose up -d
 ```
 
 A aplicação ficará disponível em:
@@ -92,15 +112,15 @@ Criar o arquivo .env na pasta do projeto  com as variaveis de ambiente
 ```text
 
 #VARIAVEIS DE AMBIENTE
+DATABASE_URL = "sqlite:///./livros.db"
 
 MEU_USUARIO = "admin"
 MINHA_SENHA = "admin" 
 
-DATABASE_URL = "sqlite:///./livros.db"
-PYTHONUNBUFFERED = 1
-REDIS_HOST = redis
-REDIS_PORT = 6379
-REDIS_URL = redis://redis:6379/0
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_URL=redis://redis:6379/0
+KAFKA_SERVER=kafka:9092
 
 ```
 
@@ -118,22 +138,7 @@ ou
 docker compose down
 ```
 
-Ou poderá tentar desta maneira:
 
-COMANDO PARA INICIAR O container
-```
-    1 - podman machine init
-```
-```
-    2 - podman machine start
-```
-```
-    3 - podman-compose build --no-cache
-```
-SUBIR O CONTAINER
-```
-    podman compose up -d
-```
 ---
 
 ## Credenciais de Acesso
@@ -154,7 +159,7 @@ admin
 
 ---
 
-## Endpoints
+## Endpoints Via FASTAPI
 
 exempo :
 
@@ -197,7 +202,10 @@ PUT /atualiza/{id_livro}
 ```http
 DELETE /deletar/{id_livro}
 ```
+
 ### Efetuar SOMA E FATORIAL via fila TESTE CELERY E REDIS
+
+Criar tarefa de soma
 
 ```http
 POST "/calcular/soma"
@@ -209,6 +217,8 @@ Exemplo de requisição:
 ``` http
 POST /calcular/soma?a=2&b=4
 ```
+Criar tarefa de Fatorial
+
 ```http
 POST "/calcular/fatorial"
 ```
@@ -220,12 +230,46 @@ Exemplo de requisição:
 POST /calcular/fatorial?n=5
 ```
 
-### Verificar as Filas
+
+### Verificar as Filas  e status das Tarefas enviadas.
 
 ``` http
 GET /tarefas/recentes
 ```
+Exemplo de retorno:
+
+{
+  "task_id": "5e4f9b...",
+  "status": "SUCCESS",
+  "resultado": 120
+}
+
+
+## Monitorando o Worker Celery
+
+Verificar logs do worker:
+
+```bash
+podman logs -f celery-server
 ---
+
+```bash
+celery -A celery_app worker -l info
+```
+
+Exemplos de processamentos
+
+Task tasks.fatorial received
+Task tasks.fatorial succeeded
+
+
+```md
+## Fila de Processamento
+
+O worker Celery foi configurado para consumir a fila personalizada:
+
+```text
+livros
 
 ## Estrutura do Projeto
 
