@@ -1,6 +1,6 @@
 # FastAPI - Gerenciador de Livros com processamento assincrono
 
-API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic.
+API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLite como banco de dados, SQLAlchemy como ORM e autenticação HTTP Basic,Kafka para mensageria e publicação de eventos.
 
 ## Funcionalidades
 
@@ -12,7 +12,8 @@ API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLit
 * Autenticação HTTP Basic
 * Containerização com Docker
 * Cache 
-* Filas de mensagens e processamentos assíncronos
+* Filas de mensagens e processamentos assíncronos.
+* Serviços de mensageria e publicação de eventos.
 
 ## Tecnologias Utilizadas
 
@@ -25,6 +26,7 @@ API REST desenvolvida com FastAPI para gerenciamento de Livros, utilizando SQLit
 * Docker
 * Redis
 * Celery
+* Kafka
 
 ## Arquitetura
 
@@ -270,6 +272,36 @@ O worker Celery foi configurado para consumir a fila personalizada:
 livros
 ```
 
+### Envio de mensagens e eventos para o Kafka.
+
+A aplicação utiliza Apache Kafka para publicação de eventos relacionados às
+ operações realizadas na API.
+
+O ambiente inclui:
+
+- Kafka Broker
+- Zookeeper
+- Kafka UI
+
+Kafka UI - Acesso a interface de monitoramento:
+
+http://localhost:8080
+
+```http
+POST /adiciona
+```
+
+Exemplo de corpo da requisição:
+
+```json
+{
+  "nome_Livro": "Palmeiras",
+  "autor_livro": "SEP",
+  "ano_livro": int
+}
+```
+
+
 ## Estrutura do Projeto
 
 ```text
@@ -278,7 +310,6 @@ livros
 ├── celery_app.py
 ├── tasks.py
 ├── kafka_producer.py
-├──
 ├── Dockerfile
 ├── docker-compose.yml
 ├── livros.db
@@ -293,4 +324,6 @@ livros
 Projeto desenvolvido para fins de estudo utilizando FastAPI, SQLAlchemy, SQLite e Docker.
 desenvolvido por:
 
-Everton Felipe
+## Everton Felipe
+
+---
