@@ -238,11 +238,13 @@ GET /tarefas/recentes
 ```
 Exemplo de retorno:
 
+``` json
 {
   "task_id": "5e4f9b...",
   "status": "SUCCESS",
   "resultado": 120
 }
+```
 
 
 ## Monitorando o Worker Celery
@@ -252,9 +254,6 @@ Verificar logs do worker:
 ```bash
 podman logs -f celery-server
 ---
-
-```bash
-celery -A celery_app worker -l info
 ```
 
 Exemplos de processamentos
