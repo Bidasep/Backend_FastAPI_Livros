@@ -288,7 +288,7 @@ Para modificar a porta siga para o docker-compose e mude a porta:
 
 ```
     Serviços:
-        kafka-ui::
+        kafka-ui:
             ports:
             - "8080:8080"
 ```
