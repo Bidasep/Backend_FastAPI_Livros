@@ -253,13 +253,12 @@ Verificar logs do worker:
 
 ```bash
 podman logs -f celery-server
----
 ```
 
 Exemplos de processamentos
 
-Task tasks.fatorial received
-Task tasks.fatorial succeeded
+    Task tasks.fatorial received //
+    Task tasks.fatorial succeeded
 
 
 ```md
@@ -269,18 +268,22 @@ O worker Celery foi configurado para consumir a fila personalizada:
 
 ```text
 livros
+```
 
 ## Estrutura do Projeto
 
 ```text
 .
 ├── main.py
+├── celery_app.py
+├── tasks.py
+├── kafka_producer.py
+├──
 ├── Dockerfile
 ├── docker-compose.yml
-├── pyproject.toml
-├── poetry.lock
 ├── livros.db
-└── README.md
+├── README.md
+└── .env
 ```
 
 ---
