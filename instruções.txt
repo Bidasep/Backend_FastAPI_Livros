@@ -91,3 +91,21 @@ tasklist /FI "PID eq 4196"    -->>> este 4196 é o processo que estava usando no
 Nome da imagem            Identifi Nome da sessão       Sessão# Uso de memór
 ========================= ======== ================ =========== ============
 AgentService.exe              4196 Services                   0     19.288 K
+
+
+
+******************************************
+Testes unitários.
+
+1 -  instalando dependencia 
+    poetry add pytest
+
+2 -  Configurar no PYPROJECT
+    [tool.pytest.init_options]
+    pythonpath = ["."]
+
+3 - criar tudo na pasta tests(boa prática) ; nome ideal "o que está sendo testado"+"comportamento esperado"
+    sempre iniciar o arquivo com "test_" ou terminar com "_test.py"
+        classe de testes iniciam com "Test" e as funções dentro da class com "test_"
+
+assert =  esperado
