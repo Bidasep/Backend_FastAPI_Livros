@@ -109,3 +109,12 @@ Testes unitários.
         classe de testes iniciam com "Test" e as funções dentro da class com "test_"
 
 assert =  esperado
+
+instalação pytest cover
+4 - pytest cover
+
+    poetry add pytest-cov
+
+    --rodando o COMANDO
+    poetry run pytest --cov=. tests/
+    

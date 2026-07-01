@@ -1,4 +1,4 @@
-from pokemon import calcular_pontos_ataque, pokemon_evoluiu
+from exemplotest.pokemon import calcular_pontos_ataque, pokemon_evoluiu
 import pytest
 
 

@@ -3,12 +3,12 @@ from celery_app import celery_app
 
 @celery_app.task(name="tasks.somar", queue="livros", bind=True)
 def somar(self, a, b):
-    time.sleep(3)
+    time.sleep(1)
     return a + b
 
 @celery_app.task(name="tasks.fatorial", queue="livros", bind=True)
 def fatorial(self ,n):
-    time.sleep(3)
+    time.sleep(1)
     if n < 0:
         raise ValueError("Numero negativo")
     
