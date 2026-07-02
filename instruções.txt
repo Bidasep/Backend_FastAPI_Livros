@@ -117,4 +117,8 @@ instalação pytest cover
 
     --rodando o COMANDO
     poetry run pytest --cov=. tests/
+
+5 - para testar usando mock instalar a biblioteca
+
+    poetry add pytest-mock --dev
     

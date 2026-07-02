@@ -11,7 +11,8 @@ cliente = TestClient(app)
 os.environ["MEU_USUARIO"] = "admin"
 os.environ["MINHA_SENHA"] = "admin"
 
-
+#  o redis é sempre substituido por um mock, para que os testes não dependam de um servidor Redis real.
+# ele usa automaticamente devido ao uso da fixture autouse=True, que faz com que o mock seja aplicado automaticamente a todos os testes
 @pytest.fixture(autouse=True)
 #permite que o mock do redis seja usado em todos os testes, sem precisar chamá-lo 
 # explicitamente em cada teste usando a fixture autouse=True, que faz com que o mock seja
