@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  Fast-API basics Check:
+  Fast-API-basics-check:
     runs-on: ubuntu-latest
 
 
