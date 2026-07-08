@@ -23,7 +23,7 @@ jobs:
       
 
     - name: Instalar python
-      uses: action/setup-python@v4
+      uses: actions/setup-python@v4
       with:
         python-version: '3.12'
 
