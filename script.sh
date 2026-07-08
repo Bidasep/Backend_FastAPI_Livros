@@ -28,7 +28,7 @@ kubectl wait --for=condition=available --timeout=60s deployment/livros-api
 echo "iniciando port-forwarding para o localhost na porta 8000... -> service na porta 80"
 
 #rodar o port-forwarding em background
-kubectl port-foward svc/livros-api-service 8000:80 > /dev/null 2>&1 &
+kubectl port-forward svc/livros-api-service 8000:80 > /dev/null 2>&1 &
 
 #espera alguns segundos para que o port-forwarding seja iniciado
 sleep 3
