@@ -5,9 +5,9 @@ name: Fast-API basics Check
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [master]
   pull_request:
-    branches: [ "master" ]
+    branches: [master]
 
 permissions:
   contents: read
@@ -30,7 +30,7 @@ jobs:
     - name: instalar poetry
       run: |
         curl -sSl https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin:$PATH" >> $GITHUB_PATH
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Instalar dependências com poetry
       run: |
