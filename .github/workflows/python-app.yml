@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout do código
-      uses: actions/setup-python@v3
+      uses: actions/checkout@v4
       
 
     - name: Instalar python
@@ -32,10 +32,6 @@ jobs:
         curl -sSl https://install.python-poetry.org | python3 -
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: instalar poetry
-      run: pip install poetry
-    
-    
     - name: Instalar dependências com poetry
       run: poetry install --no-interaction --no-root
 
